@@ -1,0 +1,29 @@
+﻿@page
+@model com.adtek.webui.Pages.LoginModel
+@{
+}
+
+<h1>-@ViewData["title"]</h1>
+
+<p>MY FIINSOFT</p>
+
+<div>
+    <div class="mb-3">
+        <label for="usuario" class="form-label">Usuario:</label>
+        <input type="email" class="form-control" id="usuario" placeholder="Introduzca el usuario">
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="password" placeholder="Introduzca la contraseña">
+    </div>
+
+    <div class="mb-3 text-end">
+        <button type="button" class="btn btn-primary">Login</button>
+    </div>
+
+    <div class="mb-5 mb-3 text-center">
+        <button type="button" class="btn btn-primary" onclick="location.href='/Registro'">Registrarse</button>
+    </div>
+
+</div>

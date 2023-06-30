@@ -1,0 +1,39 @@
+﻿@page
+@model com.adtek.webui.Pages.RegistroModel
+@{
+}
+
+<p>Registro de usuarios</p>
+
+<div>
+    <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre(s):</label>
+        <input type="text" class="form-control" id="nombre" placeholder="Introduzca el unombresuario">
+    </div>
+
+    <div class="mb-3">
+        <label for="apellidoPaterno" class="form-label">Apellido paterno:</label>
+        <input type="text" class="form-control" id="apellidoPaterno" placeholder="Introduzca el apellido paterno">
+    </div>
+
+    <div class="mb-3">
+        <label for="apellidoMaterno" class="form-label">Apellido materno:</label>
+        <input type="text" class="form-control" id="apellidoMaterno" placeholder="Introduzca el apellido materno">
+    </div>
+
+    <div class="mb-3">
+        <label for="correoElectronico" class="form-label">Correo electronico:</label>
+        <input type="text" class="form-control" id="correoElectronico" placeholder="Introduzca el correo electronico">
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="password" placeholder="Introduzca la contraseña">
+    </div>        
+        
+    <div class="mb-3 text-end">
+        <button type="button" class="btn btn-primary" onclick="location.href='/Login'">Cancelar</button>
+        <button type="button" class="btn btn-primary">Registrar</button>
+    </div>
+
+</div>
