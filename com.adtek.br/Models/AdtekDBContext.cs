@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace com.adtek.br.Models
 {
-    class AdtekDBContext : DbContext
+    public class AdtekDBContext : DbContext
     {
         public AdtekDBContext(DbContextOptions<AdtekDBContext> options) : base(options)
         {

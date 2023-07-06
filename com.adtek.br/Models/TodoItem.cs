@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace com.adtek.br.Models
 {
-    class TodoItem
+    public class TodoItem
     {
         public long Id { get; set; }
         public string? Name { get; set; }

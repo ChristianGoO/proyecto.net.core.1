@@ -9,46 +9,83 @@ using System.Threading.Tasks;
 
 namespace com.adtek.br.Services
 {
-    class TodoItemService
+    public class TodoItemService
     {
-        private readonly TodoItemRepository _repository;
+        private readonly TodoItemRepository repository;
 
         public TodoItemService(TodoItemRepository repository)
         {
-            this._repository = repository;
+            this.repository = repository;
         }
 
         public IEnumerable<TodoItemDto> GetTodoItems()
         {
-            return this._repository.GetTodoItems().Select(todoItem => ItemToDTO(todoItem));
+            return this.repository.GetTodoItems().Select(todoItem => ItemToDTO(todoItem));
         }
 
         public TodoItemDto GetTodoItem(long id)
         {
-            return null;
+            var todoItem = this.repository.GetTodoItem(id);
+
+            if (todoItem == null)
+                throw new Exception("No se encontro el registro");
+            else
+                return ItemToDTO(todoItem);
         }
 
-        public void PutTodoItem(long id, TodoItemDto todoItem)
+        public void PutTodoItem(long id, TodoItemDto todoItemDto)
         { 
-        
+            if (id != todoItemDto.Id) 
+            {
+                throw new Exception("La peticion no es valida");
+            }
+
+            var todoItem = DtoToEntity(todoItemDto);
+            this.repository.Update(todoItem);
+
         }
 
-        public TodoItemDto PostTodoItem(TodoItemDto todoItem) 
+        public TodoItemDto PostTodoItem(TodoItemDto todoItemDto) 
         {
-            return null;
+            var todoItem = DtoToEntity(todoItemDto);
+            this.repository.Insert(todoItem);
+            todoItemDto.Id = todoItem.Id;
+            return todoItemDto;
         }
-
 
         public void DeleteTodoItem(long id) 
         {
-        
+            var todoItem = this.repository.GetTodoItem(id);
+            if(todoItem == null)
+            {
+                throw new Exception("El registro no se encontro");
+            }
+
+            this.repository.Delete(todoItem);
         }
 
-        private static TodoItemDto ItemToDTO(TodoItem todoItem) => new TodoItemDto
+        private TodoItemDto ItemToDTO(TodoItem todoItem)
         {
-            Id = todoItem.Id,
-            Name = todoItem.Name,
-            IsComplete = todoItem.IsComplete
-        };
+            TodoItemDto dto = new TodoItemDto
+            {
+                Id = todoItem.Id,
+                Name = todoItem.Name,
+                IsComplete = todoItem.IsComplete
+            };
+
+            return dto;
+        }
+
+        private TodoItem DtoToEntity(TodoItemDto todoItemDto)
+        {
+            TodoItem entinty = new TodoItem
+            {
+                Id = todoItemDto.Id,
+                Name = todoItemDto.Name,
+                IsComplete = todoItemDto.IsComplete
+            };
+
+            return entinty;
+        }
     }
 }

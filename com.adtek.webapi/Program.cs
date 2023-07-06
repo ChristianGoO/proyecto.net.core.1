@@ -1,4 +1,6 @@
-using com.adtek.webapi.Models;
+using com.adtek.br.Models;
+using com.adtek.br.Repository;
+using com.adtek.br.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,8 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TodoContext>(opt =>
+builder.Services.AddDbContext<AdtekDBContext>(opt =>
     opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddTransient(typeof(TodoItemService));
+builder.Services.AddTransient(typeof(TodoItemRepository));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -8,41 +8,41 @@ using System.Threading.Tasks;
 
 namespace com.adtek.br.Repository
 {
-    class TodoItemRepository
+    public class TodoItemRepository
     {
-        private readonly AdtekDBContext _context;
+        private readonly AdtekDBContext context;
 
         public TodoItemRepository(AdtekDBContext context)
         {
-            this._context = context;
+            this.context = context;
         }
 
         public IEnumerable<TodoItem> GetTodoItems() 
         {
-            return this._context.TodoItems.ToList();
+            return this.context.TodoItems.ToList();
         }
 
         public TodoItem? GetTodoItem(long id)
         {
-            return this._context.TodoItems.Find(id);
+            return this.context.TodoItems.Find(id);
         }
 
         public void Update(TodoItem todoItem)
         {
-            this._context.Entry(todoItem).State = EntityState.Modified;
-            this._context.SaveChanges();
+            this.context.Entry(todoItem).State = EntityState.Modified;
+            this.context.SaveChanges();
         }
 
         public void Insert(TodoItem todoItem) 
         {
-            this._context.TodoItems.Add(todoItem);
-            this._context.SaveChanges();
+            this.context.TodoItems.Add(todoItem);
+            this.context.SaveChanges();
         }
 
         public void Delete(TodoItem todoItem)
         {
-            this._context.TodoItems.Remove(todoItem);
-            this._context.SaveChanges();
+            this.context.TodoItems.Remove(todoItem);
+            this.context.SaveChanges();
         }
 
     }

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using com.adtek.webapi.Models;
+using com.adtek.br.Services;
+using com.adtek.br.Dtos;
 
 namespace com.adtek.webapi.Controllers
 {
@@ -13,74 +14,44 @@ namespace com.adtek.webapi.Controllers
     [ApiController]
     public class TodoApiController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly TodoItemService  service;
 
-        public TodoApiController(TodoContext context)
+        public TodoApiController(TodoItemService service)
         {
-            _context = context;
+            this.service = service;
         }
 
         // GET: api/TodoApi
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
+        public async Task<ActionResult<IEnumerable<TodoItemDto>>> GetTodoItems()
         {
-            return await _context.TodoItems.ToListAsync();
+            var todoItemsDtos = this.service.GetTodoItems();
+            return this.StatusCode(280, todoItemsDtos);
         }
 
         // GET: api/TodoApi/5
         [HttpGet("producto/{id}")]
-        public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
+        public async Task<ActionResult<TodoItemDto>> GetTodoItem(long id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
-
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
-            return todoItem;
+            return this.service.GetTodoItem(id);
         }
 
         // PUT: api/TodoApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
+        public async Task<IActionResult> PutTodoItem(long id, TodoItemDto todoItemDto)
         {
-            if (id != todoItem.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(todoItem).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TodoItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            this.service.PutTodoItem(id, todoItemDto);
             return NoContent();
         }
 
         // POST: api/TodoApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
+        public async Task<ActionResult<TodoItemDto>> PostTodoItem(TodoItemDto todoItemDto)
         {
-            _context.TodoItems.Add(todoItem);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
+            this.service.PostTodoItem(todoItemDto);
+            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDto.Id }, todoItemDto);
 
         }
 
@@ -88,21 +59,8 @@ namespace com.adtek.webapi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
-            _context.TodoItems.Remove(todoItem);
-            await _context.SaveChangesAsync();
-
+            this.service.DeleteTodoItem(id);
             return NoContent();
-        }
-
-        private bool TodoItemExists(long id)
-        {
-            return (_context.TodoItems?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
