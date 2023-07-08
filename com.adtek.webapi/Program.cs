@@ -8,8 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AdtekDBContext>(opt =>
-    opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddDbContext<AdtekDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), builder =>
+{
+    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10),null);
+}));
+
 builder.Services.AddTransient(typeof(TodoItemService));
 builder.Services.AddTransient(typeof(TodoItemRepository));
 

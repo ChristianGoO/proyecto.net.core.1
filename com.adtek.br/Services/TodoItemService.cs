@@ -1,4 +1,5 @@
 ﻿using com.adtek.br.Dtos;
+using com.adtek.br.Exceptions;
 using com.adtek.br.Models;
 using com.adtek.br.Repository;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace com.adtek.br.Services
 {
-    public class TodoItemService
+    public class TodoItemService : Service
     {
         private readonly TodoItemRepository repository;
 
@@ -18,50 +19,113 @@ namespace com.adtek.br.Services
             this.repository = repository;
         }
 
-        public IEnumerable<TodoItemDto> GetTodoItems()
+        public Result<TodoItemDto> GetTodoItems()
         {
-            return this.repository.GetTodoItems().Select(todoItem => ItemToDTO(todoItem));
-        }
-
-        public TodoItemDto GetTodoItem(long id)
-        {
-            var todoItem = this.repository.GetTodoItem(id);
-
-            if (todoItem == null)
-                throw new Exception("No se encontro el registro");
-            else
-                return ItemToDTO(todoItem);
-        }
-
-        public void PutTodoItem(long id, TodoItemDto todoItemDto)
-        { 
-            if (id != todoItemDto.Id) 
+            Result<TodoItemDto> result = new Result<TodoItemDto>();
+            try 
             {
-                throw new Exception("La peticion no es valida");
+                result.Resultados = this.repository.GetTodoItems().Select(todoItem => ItemToDTO(todoItem));
+                result.ConsultaExitosa();
+            }
+            catch (Exception ex)
+            {
+                result = this.GeneraError<TodoItemDto>(ex);
             }
 
-            var todoItem = DtoToEntity(todoItemDto);
-            this.repository.Update(todoItem);
-
+            return result;
         }
 
-        public TodoItemDto PostTodoItem(TodoItemDto todoItemDto) 
+        public Result<TodoItemDto> GetTodoItem(long id)
         {
-            var todoItem = DtoToEntity(todoItemDto);
-            this.repository.Insert(todoItem);
-            todoItemDto.Id = todoItem.Id;
-            return todoItemDto;
-        }
-
-        public void DeleteTodoItem(long id) 
-        {
-            var todoItem = this.repository.GetTodoItem(id);
-            if(todoItem == null)
+            Result<TodoItemDto> result = new Result<TodoItemDto>();
+            try 
             {
-                throw new Exception("El registro no se encontro");
+                var todoItem = this.repository.GetTodoItem(id);
+
+                if (todoItem == null)
+                    throw new NotFoundException("No se encontro el registro");
+                else
+                    result.Resultado = this.ItemToDTO(todoItem);
+                    result.ConsultaExitosa();
+            }
+            catch (Exception ex)
+            {
+                result = this.GeneraError<TodoItemDto>(ex);
             }
 
-            this.repository.Delete(todoItem);
+            return result;
+        }
+
+        public Result<object> PutTodoItem(long id, TodoItemDto todoItemDto)
+        {
+            Result<object> result = new Result<object>();
+            try
+            {
+                if (id != todoItemDto.Id)
+                    throw new BadRequestException("La peticion no es valida", "Identificador no coincide con el id del parametro");
+
+                var todoItem = this.repository.GetTodoItem(id);
+
+                if (todoItem == null)
+                    throw new NotFoundException("No se encontro el registro", "No se encontro el registro con el id" + id);
+
+                todoItem.Name = todoItemDto.Name;
+                todoItem.IsComplete = todoItemDto.IsComplete;
+
+                this.repository.Update(todoItem);
+
+                result.ActualizacionExitosa();
+            }
+            catch (Exception ex)
+            {
+
+                result = this.GeneraError<object>(ex);
+            }
+
+            return result;
+        }
+
+        public Result<TodoItemDto> PostTodoItem(TodoItemDto todoItemDto) 
+        {
+            Result<TodoItemDto> result = new Result<TodoItemDto>();
+            try
+            {
+                var todoItem = DtoToEntity(todoItemDto);
+                this.repository.Insert(todoItem);
+                todoItemDto.Id = todoItem.Id;
+                
+                result.Resultado =  todoItemDto;
+                result.CreacionExitosa();
+            }
+            catch (Exception ex)
+            {
+                result = this.GeneraError<TodoItemDto>(ex);
+            }
+
+            return result;
+        }
+
+        public Result<object> DeleteTodoItem(long id) 
+        {
+            Result<object> result = new Result<object>();
+            try
+            {
+                var todoItem = this.repository.GetTodoItem(id);
+                if (todoItem == null)
+                    throw new Exception("El registro no se encontro");
+
+                this.repository.Delete(todoItem);
+
+                result.EliminacionExitosa();
+
+            }
+            catch (Exception ex)
+            {
+
+                result = this.GeneraError<object>(ex);
+            }
+
+            return result;
         }
 
         private TodoItemDto ItemToDTO(TodoItem todoItem)

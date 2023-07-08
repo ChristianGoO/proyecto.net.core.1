@@ -12,7 +12,7 @@ namespace com.adtek.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodoApiController : ControllerBase
+    public class TodoApiController : MainController
     {
         private readonly TodoItemService  service;
 
@@ -23,44 +23,54 @@ namespace com.adtek.webapi.Controllers
 
         // GET: api/TodoApi
         [HttpGet]
+        [ProducesResponseType(typeof(ApiResults<TodoItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<TodoItemDto>>> GetTodoItems()
         {
-            var todoItemsDtos = this.service.GetTodoItems();
-            return this.StatusCode(280, todoItemsDtos);
+            return await this.RespuestaAsync(this.service.GetTodoItems());
         }
 
         // GET: api/TodoApi/5
-        [HttpGet("producto/{id}")]
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ApiResults<TodoItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<TodoItemDto>> GetTodoItem(long id)
         {
-            return this.service.GetTodoItem(id);
+            return await this.RespuestaAsync(this.service.GetTodoItem(id));
         }
 
         // PUT: api/TodoApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ApiResults<TodoItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PutTodoItem(long id, TodoItemDto todoItemDto)
         {
-            this.service.PutTodoItem(id, todoItemDto);
-            return NoContent();
+            return await this.RespuestaAsync(this.service.PutTodoItem(id, todoItemDto));
+        
         }
 
         // POST: api/TodoApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [ProducesResponseType(typeof(ApiResult<TodoItemDto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<TodoItemDto>> PostTodoItem(TodoItemDto todoItemDto)
         {
-            this.service.PostTodoItem(todoItemDto);
-            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDto.Id }, todoItemDto);
-
+            return await this.RespuestaAsync(this.service.PostTodoItem(todoItemDto));
         }
 
         // DELETE: api/TodoApi/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResults<TodoItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
-            this.service.DeleteTodoItem(id);
-            return NoContent();
+            return await this.RespuestaAsync(this.service.DeleteTodoItem(id));
         }
     }
 }
