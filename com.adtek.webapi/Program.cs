@@ -1,3 +1,4 @@
+using com.adtek.br.Configuration;
 using com.adtek.br.Models;
 using com.adtek.br.Repository;
 using com.adtek.br.Services;
@@ -22,8 +23,11 @@ builder.Services.AddDbContext<AdtekDBContext>(opt => opt.UseSqlServer(builder.Co
     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10),null);
 }));
 
+builder.Services.AddTransient(typeof(AdtekConfigManager));
 builder.Services.AddTransient(typeof(TodoItemService));
 builder.Services.AddTransient(typeof(TodoItemRepository));
+builder.Services.AddTransient(typeof(MailService));
+
 
 builder.Services.AddTransient(typeof(UsuarioService));
 builder.Services.AddTransient(typeof(UsuarioRepository));

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace com.adtek.br.Services
@@ -14,9 +15,15 @@ namespace com.adtek.br.Services
     {
         private readonly UsuarioRepository usuarioRepository;
 
-        public UsuarioService(UsuarioRepository usuarioRepository)
+        private readonly MailService mailService;
+
+        private char[] caracteresEspeciales = new char[] { '!', '0', '#', '$', '%' };
+        private string exRegularMail = "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@(([a-zA-Z]+[\\w-]+\\.){1,2} [a-zA-Z]{2,4})$";
+
+        public UsuarioService(UsuarioRepository usuarioRepository, MailService mailService)
         {
             this.usuarioRepository = usuarioRepository;
+            this.mailService = mailService;
         }
 
         public Result<UsuarioDto> Crear(UsuarioDto usuarioDto)
@@ -38,6 +45,22 @@ namespace com.adtek.br.Services
                 if (string.IsNullOrEmpty(usuarioDto.Contraseña))
                     detalles.Add("La contraseña es requerida");
 
+                //VALIDAR FORMATO DE DATOS
+                if (usuarioDto.CorreoElectronico != null && !Regex.IsMatch(usuarioDto.CorreoElectronico, exRegularMail))
+                    detalles.Add("El correo electronico no es valido");
+
+                //VALIDAR LA CONTRASEÑA
+                if (!string.IsNullOrEmpty(usuarioDto.Contraseña))
+                {
+                    if (usuarioDto.Contraseña.Length < 6)
+                        detalles.Add("La contraseña debe tener una longitud minima de 6 caracteres");
+                    if (usuarioDto.Contraseña.Length > 8)
+                        detalles.Add("La contraseña debe tener una longitud maxima de 8 caracteres");
+                    if (!caracteresEspeciales.Any(caracter => usuarioDto.Contraseña.Contains(caracter)))
+                        detalles.Add("La contraseña debe tener una longitud minima de 6 caracteres");
+                }
+
+
                 if (detalles.Count > 0)
                     throw new BadRequestException("La solicitud es incorrecta", detalles.ToArray());
 
@@ -48,6 +71,10 @@ namespace com.adtek.br.Services
                 usuario.UsuarioModificacion = "SISTEMA";
 
                 this.usuarioRepository.Insert(usuario);
+
+                //ENVIO DE CORREO ELECTRONICO
+                if(!string.IsNullOrEmpty(usuarioDto.CorreoElectronico))
+                    this.mailService.EnviarCorreo(usuarioDto.CorreoElectronico, "Registro y activacion de usuario", "Hola bienvenido al registro", true);
 
                 usuarioDto.Id = usuario.Id;
                 result.Resultado = usuarioDto;
