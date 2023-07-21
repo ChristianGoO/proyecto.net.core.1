@@ -1,4 +1,6 @@
-﻿using com.adtek.br.Dtos;
+﻿using com.adtek.br.Configuration;
+using com.adtek.br.Dtos;
+using com.adtek.br.Enums;
 using com.adtek.br.Exceptions;
 using com.adtek.br.Models;
 using com.adtek.br.Repository;
@@ -15,15 +17,24 @@ namespace com.adtek.br.Services
     {
         private readonly UsuarioRepository usuarioRepository;
 
+        private readonly ContenidoRepository contenidoRepository;
+
         private readonly MailService mailService;
 
-        private char[] caracteresEspeciales = new char[] { '!', '0', '#', '$', '%' };
-        private string exRegularMail = "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@(([a-zA-Z]+[\\w-]+\\.){1,2} [a-zA-Z]{2,4})$";
+        private readonly AdtekConfigManager adtekConfigManager;
 
-        public UsuarioService(UsuarioRepository usuarioRepository, MailService mailService)
+        private char[] caracteresEspeciales = new char[] { '!', '0', '#', '$', '%' };
+        private string exRegularMail = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
+
+        public UsuarioService(UsuarioRepository usuarioRepository,
+            ContenidoRepository contenidoRepository,
+            MailService mailService,
+            AdtekConfigManager adtekConfigManager)
         {
             this.usuarioRepository = usuarioRepository;
+            this.contenidoRepository = contenidoRepository;
             this.mailService = mailService;
+            this.adtekConfigManager = adtekConfigManager;
         }
 
         public Result<UsuarioDto> Crear(UsuarioDto usuarioDto)
@@ -34,7 +45,7 @@ namespace com.adtek.br.Services
 
                 List<string> detalles = new List<string>();
 
-                if (string.IsNullOrEmpty(usuarioDto.Nombre))   
+                if (string.IsNullOrEmpty(usuarioDto.Nombre))
                     detalles.Add("El nombre es valido");
                 if (string.IsNullOrEmpty(usuarioDto.ApellidoPaterno))
                     detalles.Add("El apellido paterno es requerido");
@@ -64,7 +75,7 @@ namespace com.adtek.br.Services
                 if (detalles.Count > 0)
                     throw new BadRequestException("La solicitud es incorrecta", detalles.ToArray());
 
-                Usuario usuario = this.DtoToEntity(usuarioDto); 
+                Usuario usuario = this.DtoToEntity(usuarioDto);
                 usuario.fechaCreacion = DateTime.Now;
                 usuario.UsuarioCreacion = "SISTEMA";
                 usuario.fechaActualizacion = DateTime.Now;
@@ -73,8 +84,21 @@ namespace com.adtek.br.Services
                 this.usuarioRepository.Insert(usuario);
 
                 //ENVIO DE CORREO ELECTRONICO
-                if(!string.IsNullOrEmpty(usuarioDto.CorreoElectronico))
-                    this.mailService.EnviarCorreo(usuarioDto.CorreoElectronico, "Registro y activacion de usuario", "Hola bienvenido al registro", true);
+                if (!string.IsNullOrEmpty(usuarioDto.CorreoElectronico))
+                {
+                    Contenido? contenido = contenidoRepository.GetByClave(ClaveContenido.REGISTRO.ToString());
+
+                    if (contenido == null)
+                        throw new Exception($"El contenido con la clave {ClaveContenido.REGISTRO} no existe");
+
+                    string contenidoHtml = contenido.ContenidoHtml;
+                    contenidoHtml = contenidoHtml.Replace("@NombreUsuario", usuario.Nombre + " " + usuario.ApellidoPaterno);
+                    contenidoHtml = contenidoHtml.Replace("@UrlBase", this.adtekConfigManager.UrlBase);
+                    contenidoHtml = contenidoHtml.Replace("@uid", usuario.guid.ToString());
+                    
+                    this.mailService.EnviarCorreo(usuarioDto.CorreoElectronico, contenido.Asunto, contenidoHtml, true);
+                }
+
 
                 usuarioDto.Id = usuario.Id;
                 result.Resultado = usuarioDto;

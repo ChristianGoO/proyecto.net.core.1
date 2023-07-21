@@ -61,7 +61,15 @@ namespace com.adtek.br.Configuration
         {
             get
             {
-                return this.GetConfiguration("AppSeettings:hots", false);
+                return this.GetConfiguration("AppSeettings:EnableSsl", false);
+            }
+        }
+
+        public string UrlBase
+        {
+            get
+            {
+                return this.GetConfiguration("AppSeettings:UrlBase", string.Empty);
             }
         }
 

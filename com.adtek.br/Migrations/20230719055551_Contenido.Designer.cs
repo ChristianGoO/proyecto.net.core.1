@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using com.adtek.br.Models;
 
@@ -11,9 +12,11 @@ using com.adtek.br.Models;
 namespace com.adtek.br.Migrations
 {
     [DbContext(typeof(AdtekDBContext))]
-    partial class AdtekDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230719055551_Contenido")]
+    partial class Contenido
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,9 +89,6 @@ namespace com.adtek.br.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ApellidoMaterno")
                         .HasColumnType("nvarchar(max)");
 
@@ -115,9 +115,6 @@ namespace com.adtek.br.Migrations
 
                     b.Property<DateTime>("fechaCreacion")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("guid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

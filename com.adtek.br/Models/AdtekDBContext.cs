@@ -25,5 +25,8 @@ namespace com.adtek.br.Models
         public DbSet<TodoItem> TodoItems { get; set; } = null!;
 
         public DbSet<Usuario> Usuarios { get; set; } = null!;
+
+        public DbSet<Contenido> Contenidos { get; set; } = null!;
+
     }
 }

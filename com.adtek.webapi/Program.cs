@@ -5,6 +5,7 @@ using com.adtek.br.Services;
 using Microsoft.EntityFrameworkCore;
 
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -27,6 +28,7 @@ builder.Services.AddTransient(typeof(AdtekConfigManager));
 builder.Services.AddTransient(typeof(TodoItemService));
 builder.Services.AddTransient(typeof(TodoItemRepository));
 builder.Services.AddTransient(typeof(MailService));
+builder.Services.AddTransient(typeof(ContenidoRepository));
 
 
 builder.Services.AddTransient(typeof(UsuarioService));
