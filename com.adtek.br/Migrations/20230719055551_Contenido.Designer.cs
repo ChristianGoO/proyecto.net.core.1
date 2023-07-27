@@ -13,7 +13,7 @@ namespace com.adtek.br.Migrations
 {
     [DbContext(typeof(AdtekDBContext))]
     [Migration("20230719055551_Contenido")]
-    partial class Contenido
+    partial class TablaContenido
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

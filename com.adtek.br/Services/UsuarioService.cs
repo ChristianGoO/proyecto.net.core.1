@@ -113,6 +113,57 @@ namespace com.adtek.br.Services
             return result;
         }
 
+        public Result<object> ActivarUsuario(ActivarUsuarioDto activarUsuarioDto) 
+        {
+            Result<object> result = new Result<object>();
+
+            try
+            {
+                Usuario? usuario = usuarioRepository.GetByUid(activarUsuarioDto.uid);
+                if (usuario == null)
+                    throw new NotFoundException("No se encontro el registro", $"El usuario con el uid {activarUsuarioDto.uid} no existe");
+
+                if(usuario.Activo)
+                    throw new ConflictException("La activacion ya ha sido realizada", $"El usuario con el uid {activarUsuarioDto.uid} a ha sido activado");
+
+                usuario.Activo = true;
+                usuarioRepository.Update(usuario);
+
+                result.ActualizacionExitosa();
+
+            }
+            catch (Exception ex)
+            {
+                result = this.GeneraError<object>(ex);
+            }
+
+            return result;
+        }
+
+        public Result<UsuarioConsultaDto> Obtener(string uid)
+        {
+            Result<UsuarioConsultaDto> result = new Result<UsuarioConsultaDto>();
+
+            try
+            {
+                Usuario? usuario = usuarioRepository.GetByUid(new Guid(uid));
+                if (usuario == null)
+                    throw new NotFoundException("No se encontro el registro", $"El usuario con el uid {uid} no existe");
+
+                result.Resultado = this.EntityToDto(usuario);
+                result.ConsultaExitosa();
+
+            }
+            catch (Exception ex)
+            {
+
+                result = this.GeneraError<UsuarioConsultaDto>(ex);
+            }
+
+            return result;
+
+        }
+
         private Usuario DtoToEntity(UsuarioDto usuarioDto)
         {
             Usuario entity = new Usuario
@@ -128,5 +179,20 @@ namespace com.adtek.br.Services
 
             return entity;
         }
+
+        private UsuarioConsultaDto EntityToDto(Usuario usuario)
+        {
+            UsuarioConsultaDto dto = new UsuarioConsultaDto
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre,
+                ApellidoPaterno = usuario.ApellidoPaterno,
+                ApellidoMaterno = usuario.ApellidoMaterno,
+                CorreoElectronico = usuario.CorreoElectronico
+            };
+
+            return dto;
+        }
+
     }
 }

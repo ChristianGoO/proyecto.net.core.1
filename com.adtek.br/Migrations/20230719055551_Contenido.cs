@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace com.adtek.br.Migrations
 {
     /// <inheritdoc />
-    public partial class Contenido : Migration
+    public partial class TablaContenido : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

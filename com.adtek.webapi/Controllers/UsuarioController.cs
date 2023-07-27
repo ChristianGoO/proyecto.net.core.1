@@ -26,5 +26,26 @@ namespace com.adtek.webapi.Controllers
             return await this.RespuestaAsync(this.usuarioService.Crear(usuarioDto));
         }
 
+        [HttpPost("ActivarUsuario")]
+        [ProducesResponseType(typeof(ApiResult<>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<UsuarioDto>> ActivarUsuario(ActivarUsuarioDto activarUsuarioDto)
+        {
+
+            return await this.RespuestaAsync(this.usuarioService.ActivarUsuario(activarUsuarioDto));
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResult<UsuarioConsultaDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<UsuarioDto>> Obtener(string uid)
+        {
+
+            return await this.RespuestaAsync(this.usuarioService.Obtener(uid));
+        }
+
     }
 }

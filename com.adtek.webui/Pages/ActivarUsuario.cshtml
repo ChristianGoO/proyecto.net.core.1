@@ -8,16 +8,21 @@
 
 <div>
 
-    <div id="msg1">
-        <p>Estimado <span id="nombre"></span> su cuenta ha sido activada en clien en:</p>
+    <div id="activacionExitosa" class="hidden-div">
+        <p>Estimado <span id="nombre" class="span-name"></span> su cuenta ha sido activadad de clic en:</p>
 
         <div class="mb-3 text-center">
             <button type="button" class="btn btn-primary" onclick="location.href='/Login'">Continuar</button>
         </div>
+
     </div>
 
-    <div id="msg2">
-        <p>Estimado <span id="nombre"></span> su cuenta ha sido activada en clien en:</p>
+    <div id="activacionExpirada" class="hidden-div">
+        <p>Estimado usuario la activacion de su cuenta ha expirado, vuelva a intentar general una cuenta: </p>
+
+        <div class="mb-3 text-center">
+            <button type="button" class="btn btn-primary" onclick="location.href='/Registro'">Registrar</button>
+        </div>
 
     </div>
 

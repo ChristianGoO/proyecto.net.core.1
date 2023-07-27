@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.hidden-div {
+    display:block;
+    border: 1px solid red;
+}
+
+.span-name {
+    color: black;
+    font-weight:bold;
+}

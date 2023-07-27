@@ -1,4 +1,5 @@
 ﻿using com.adtek.br.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,17 @@ namespace com.adtek.br.Repository
             this.context.Usuarios.Add(usuario);
             this.context.SaveChanges();
         }
+
+        public Usuario? GetByUid(Guid uid) 
+        {
+            return this.context.Usuarios.Where(usuario => usuario.guid == uid).FirstOrDefault();
+        }
+
+        public void Update(Usuario usuario) 
+        {
+            this.context.Entry(usuario).State = EntityState.Modified;
+            this.context.SaveChanges();
+        }
+
     }
 }
