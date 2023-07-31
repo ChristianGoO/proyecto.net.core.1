@@ -1,4 +1,5 @@
 ﻿window.onload = function () {
+    debugger;
     registroBM.inicializar();
 }
 
@@ -10,9 +11,10 @@ var registroBM = {
     correoElectronico: document.getElementById("correoElectronico"),
     password: document.getElementById("password"),
     bttnRegistrar: document.getElementById("bttnRegistrar"),
-    myAlertInfo: document.getElementById("myAlertInfo"),
 
     registrar: function () {
+
+        debugger;
 
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -37,31 +39,9 @@ var registroBM = {
         fetch("https://localhost:7092/api/Usuario", requestOptions)
             .then(response => response.text())
             .then(result => function () {
-                if (result.codigo == 201) {
-                    registroBM.mostrarInformacion(result.mensaje);
-                }
-                else if (result.codigo == 400) {
-                    registroBM.mostrarAlerta(result.mensaje, result.detalles);
-                }
-                else {
-                    registroBM.mostrarError(result.mensaje, result.detalles);
-                }
+                alert.mostrarResultado(result);
             })
             .catch(error => console.log('error', error))
-    },
-
-    mostrarInformacion: function (mensaje) {
-        console.info(mensaje)
-    },
-
-    mostrarAlerta: function (mensaje, detalle) {
-        console.warn("Mensaje: " + mensaje);
-        console.warn("Detalle: " + detalle);
-    },
-
-    mostrarError: function (mensaje, detalle) {
-        console.error("Mensaje: " + mensaje);
-        console.error("Detalle: " + detalle);
     },
 
     inicializar: function () {
@@ -69,10 +49,6 @@ var registroBM = {
     },
 
     cargarEvantos: function () {
-
-        console.log("text in console")
-        console.log(registroBM.bttnRegistrar);
-
         registroBM.bttnRegistrar.onclick = registroBM.registrar;
     }
    
