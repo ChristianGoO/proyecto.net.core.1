@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using com.adtek.br.Services;
 using com.adtek.br.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace com.adtek.webapi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TodoApiController : MainController
@@ -24,6 +26,7 @@ namespace com.adtek.webapi.Controllers
         // GET: api/TodoApi
         [HttpGet]
         [ProducesResponseType(typeof(ApiResults<TodoItemDto>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(ApiResults<>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<TodoItemDto>>> GetTodoItems()
         {

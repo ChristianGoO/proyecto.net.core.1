@@ -147,6 +147,7 @@ namespace com.adtek.br.Services
             try
             {
                 Usuario? usuario = usuarioRepository.GetByUid(new Guid(uid));
+
                 if (usuario == null)
                     throw new NotFoundException("No se encontro el registro", $"El usuario con el uid {uid} no existe");
 

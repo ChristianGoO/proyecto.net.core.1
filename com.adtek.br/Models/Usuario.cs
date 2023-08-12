@@ -12,7 +12,7 @@ namespace com.adtek.br.Models
         public string? Nombre { get; set; }
         public string? ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
-        public string? CorreoElectronico { get; set; }
+        public string CorreoElectronico { get; set; } = string.Empty;
         public string? Contraseña { get; set; }
         public Guid guid { get; set; } = Guid.NewGuid();
         public bool Activo { set; get; } = false;

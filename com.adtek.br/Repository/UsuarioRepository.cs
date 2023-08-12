@@ -28,6 +28,11 @@ namespace com.adtek.br.Repository
             return this.context.Usuarios.Where(usuario => usuario.guid == uid).FirstOrDefault();
         }
 
+        public Usuario? GetByCorreoContraseña(string correoElectronico, string contraseña)
+        {
+            return this.context.Usuarios.Where(u => u.CorreoElectronico.Equals(correoElectronico) && u.Contraseña.Equals(contraseña)).FirstOrDefault();
+        }
+
         public void Update(Usuario usuario) 
         {
             this.context.Entry(usuario).State = EntityState.Modified;
