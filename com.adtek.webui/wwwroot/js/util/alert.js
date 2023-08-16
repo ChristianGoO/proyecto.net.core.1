@@ -22,7 +22,7 @@ var alert = {
         alert.agregarAlerta(mensaje, [], 'success')
     },
 
-    mostrarAdvertencia: function (mensaje, detalle) {
+    mostrarAlerta: function (mensaje, detalle) {
         alert.agregarAlerta(mensaje, detalle, 'warning')
     },
 
@@ -31,7 +31,7 @@ var alert = {
  
     },
 
-    mostrarResultaro: function (result) {
+    mostrarResultado: function (result) {
         if (result.codigo == 201) {
             alert.mostrarInformacion(result.mensaje);
         }

@@ -11,7 +11,7 @@ namespace com.adtek.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController : ControllerBase
+    public class TokenController : MainController
     {
         private readonly TokenService tokenService;
 
@@ -21,9 +21,13 @@ namespace com.adtek.webapi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(UserInfo userInfo)
+        [ProducesResponseType(typeof(ApiResult<TokenDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiErrorResult<>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<TokenDto>> Post(UserInfo userInfo)
         {
-            return Ok(this.tokenService.autho(userInfo));
+            return await this.RespuestaAsync(this.tokenService.autho(userInfo));
         }
     }
 }

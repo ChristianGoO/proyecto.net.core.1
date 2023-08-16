@@ -28,9 +28,9 @@ namespace com.adtek.br.Repository
             return this.context.Usuarios.Where(usuario => usuario.guid == uid).FirstOrDefault();
         }
 
-        public Usuario? GetByCorreoContraseña(string correoElectronico, string contraseña)
+        public Usuario? GetByCorreo(string correoElectronico)
         {
-            return this.context.Usuarios.Where(u => u.CorreoElectronico.Equals(correoElectronico) && u.Contraseña.Equals(contraseña)).FirstOrDefault();
+            return this.context.Usuarios.Where(u => u.CorreoElectronico.Equals(correoElectronico)).FirstOrDefault();
         }
 
         public void Update(Usuario usuario) 

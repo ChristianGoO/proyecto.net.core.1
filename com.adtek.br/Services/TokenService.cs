@@ -25,14 +25,25 @@ namespace com.adtek.br.Services
             this.usuarioRepository = usuarioRepository;
         }
 
-        public string autho(UserInfo userInfo)
+        public Result<TokenDto> autho(UserInfo userInfo)
         {
-            if (userInfo != null && !string.IsNullOrEmpty(userInfo.Email) && !string.IsNullOrEmpty(userInfo.Password))
-            {
-                Usuario? usuario = this.usuarioRepository.GetByCorreoContraseña(userInfo.Email, userInfo.Password);
-                if (usuario != null)
-                {
+            Result<TokenDto> result = new Result<TokenDto>();
 
+            try
+            {
+                if (userInfo == null || string.IsNullOrEmpty(userInfo.Email) || string.IsNullOrEmpty(userInfo.Password))
+                    throw new BadRequestException("La solicitud es incorrecta", "Credenciales incorrectas");
+
+                Usuario? usuario = this.usuarioRepository.GetByCorreo(userInfo.Email);
+
+                if(usuario == null)
+                    throw new BadRequestException("Credenciales incorrectas", "Credenciales incorrectas");
+
+                if(usuario.Bloqueado)
+                    throw new ForbiddenException("Usuario blqueado", "El usuario esta bloqueado, contacte al administrador");
+
+                if (usuario.Contraseña.Equals(userInfo.Password))
+                {
                     string? subject = this.configuration["Jwt:Subject"];
                     if (subject == null)
                         throw new Exception("Error de configuracion Jet:Subject");
@@ -50,8 +61,7 @@ namespace com.adtek.br.Services
                         throw new Exception("Error de configuracion Jet:Audience");
 
                     //create claims details based on the user information
-                    var claims = new[]
-                    {
+                    var claims = new[] {
                             new Claim(JwtRegisteredClaimNames.Sub, subject),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
@@ -70,17 +80,23 @@ namespace com.adtek.br.Services
                         expires: DateTime.UtcNow.AddMinutes(10),
                         signingCredentials: signIn);
 
-                    return new JwtSecurityTokenHandler().WriteToken(token);
+                    TokenDto tokenDto = new TokenDto();
+                    tokenDto.AccsesToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+                    result.Resultado = tokenDto;
+                    return result;
                 }
                 else
                 {
-                    throw new NotFoundException("Credenciales no validas", "Validar el usuario y contraseña");
+                    throw new ForbiddenException("Credenciales incorrectas", "Credenciales incorrectas");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                throw new BadRequestException("Usuario y contraseña requerido");
+                result = this.GeneraError<TokenDto>(ex);
             }
+
+            return result;
         }
     }
 }

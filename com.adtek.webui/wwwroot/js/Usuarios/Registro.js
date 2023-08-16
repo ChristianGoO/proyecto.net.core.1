@@ -37,8 +37,8 @@ var registroBM = {
 
 
         fetch("https://localhost:7092/api/Usuario", requestOptions)
-            .then(response => response.text())
-            .then(result => function () {
+            .then(response => response.json())
+            .then(function(result) {
                 alert.mostrarResultado(result);
             })
             .catch(error => console.log('error', error))

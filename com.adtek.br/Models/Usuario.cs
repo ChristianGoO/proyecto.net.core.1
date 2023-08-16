@@ -13,9 +13,10 @@ namespace com.adtek.br.Models
         public string? ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
         public string CorreoElectronico { get; set; } = string.Empty;
-        public string? Contraseña { get; set; }
+        public string Contraseña { get; set; } = string.Empty;
         public Guid guid { get; set; } = Guid.NewGuid();
         public bool Activo { set; get; } = false;
+        public bool Bloqueado { get; set; } = false;
         public DateTime fechaCreacion { get; set; }
         public string? UsuarioCreacion { get; set; }
         public DateTime fechaActualizacion { get; set; }
