@@ -84,6 +84,8 @@ namespace com.adtek.br.Services
                     tokenDto.AccsesToken = new JwtSecurityTokenHandler().WriteToken(token);
 
                     result.Resultado = tokenDto;
+                    result.OperacionExitosa();
+
                     return result;
                 }
                 else
